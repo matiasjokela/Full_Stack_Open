@@ -1,18 +1,29 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personsService from './services/persons'
 
-const Person = ({ person }) => {
+const Notification = ({ message, style }) => {
+	console.log('style', {style})
 	return (
-		<li>{person.name} {person.number}</li>
+		<div className={style}>
+			{message}
+		</div>
 	)
 }
 
-const People = ({ persons , filter}) => {
+const Person = ({ person, deletePerson }) => {
+	return (
+			<li>
+				{person.name} {person.number}<button onClick={() => deletePerson(person.name, person.id)}>delete</button>
+			</li>
+	)
+}
+
+const People = ({ persons , filter, deletePerson}) => {
 	const filteredPersons = persons.filter(person => person.name.includes(filter))
 	return (
 		<ul>
 			{filteredPersons.map(person => 
-				<Person key={person.name} person={person}/>
+				<Person key={person.name} person={person} deletePerson={deletePerson}/>
 			)}
 		</ul>
 	)
@@ -31,10 +42,12 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
+  const [style, setStyle] = useState('')
 
   useEffect(() => {
-	axios.get('http://localhost:3001/persons').then((response) => {
-		setPersons(response.data)
+	personsService.getAll().then(allPersons => {
+		setPersons(allPersons)
 	})
   }, [])
 
@@ -44,13 +57,82 @@ const App = () => {
 		name: newName,
 		number: newNumber
 	}
-	persons.findIndex(person => person.name === newName) > -1 ? 
-		window.alert(`${newName} is already added to phonebook`) : 
-		setPersons(persons.concat(personObject))
-	setNewName('')
-	setNewNumber('')
+	const names = persons.map(person => person.name)
+	if (names.includes(newName)) {
+		if (window.confirm(`${newName} is already added to the phonebook, replace to old number with the new?`))
+		{
+			const person = persons.find(person => person.name === newName)
+			personsService.update(person.id, personObject).then(returnedPerson => {
+				setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
+				setNewName('')
+				setNewNumber('')
+				setMessage(`${newName} updated`)
+				setStyle('success')
+				setTimeout(() => {
+					setMessage(null)
+					setStyle('')
+				}, 5000)
+			})
+		}
+		else {
+			setNewName('')
+			setNewNumber('')
+		}
+	}
+	else {
+		personsService.create(personObject).then(returnedPerson => {
+			setPersons(persons.concat(returnedPerson))
+			setNewName('')
+			setNewNumber('')
+			setMessage(`${newName} added`)
+			setStyle('success')
+			setTimeout(() => {
+				setMessage(null)
+				setStyle('')
+			}, 5000)
+		})
+
+	}
   }
 
+
+const deletePerson = (name, id) => {
+	if (window.confirm(`Delete ${name}`))
+	{
+		personsService.deletePerson(id).then(() => {
+			setPersons(persons.filter(n => n.id !== id))
+			setMessage(`${name} deleted`)
+			setStyle('success')
+			setTimeout(() => {
+				setMessage(null)
+				setStyle('')
+			}, 5000)
+		}).catch(error => {
+			setMessage(`Information of ${name} has been removed from server`)
+			setPersons(persons.filter(n => n.id !== id))
+			setStyle('error')
+			setTimeout(() => {
+				setMessage(null)
+				setStyle('')
+			}, 5000)
+		})
+	}
+
+//   const deletePerson = (name, id) => {
+// 	if (window.confirm(`Delete ${name}`))
+// 	{
+// 		personsService.deletePerson(id)
+// 		setPersons(persons.filter(n => n.id !== id))
+// 		setMessage(`${name} deleted`)
+// 		setStyle('success')
+// 		setTimeout(() => {
+// 			setMessage(null)
+// 			setStyle('')
+// 		}, 5000)
+// 	}
+
+
+  }
   const handleNameChange = (event) => {
 	setNewName(event.target.value)
   }
@@ -65,6 +147,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+	  <Notification message={message} style={style}/>
 	  <Filter filter={filter} handleFilterChange={handleFilterChange}/>
 	  <h2>Add New</h2>
       <form onSubmit={addPerson}>
@@ -73,7 +156,7 @@ const App = () => {
         <div> <button type="submit">add</button> </div>
       </form>
       <h2>Numbers</h2>
-      <People persons={persons} filter={filter}/>
+      <People persons={persons} filter={filter} deletePerson={deletePerson}/>
     </div>
   )
 }

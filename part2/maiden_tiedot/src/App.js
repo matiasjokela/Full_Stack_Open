@@ -23,13 +23,15 @@ const Languages = ({ languages }) => {
 	)
 }
 
-const Country = ({ country }) => {
+const Country = ({ country, weatherData, setWeatherData }) => {
 	const api_key = process.env.REACT_APP_API_KEY
 	const lat = country.capitalInfo.latlng[0]
 	const lon = country.capitalInfo.latlng[1]
-	const response = axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=alerts,daily,hourly,minutely&appid=${api_key}`)
+	axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=daily,hourly,minutely,alerts&appid=${api_key}&units=metric`).then(response => {
+		setWeatherData(response.data)
+	})
 
-	console.log(response)
+	console.log('jippii', weatherData)
 	return (
 		<>
 			<h1>{country.name.common}</h1>
@@ -43,7 +45,7 @@ const Country = ({ country }) => {
 	)
 }
 
-const Display = ({ filteredCountries, setFilteredCountries}) => {
+const Display = ({ filteredCountries, setFilteredCountries, weatherData, setWeatherData}) => {
 
 	console.log(filteredCountries)
 
@@ -63,7 +65,8 @@ const Display = ({ filteredCountries, setFilteredCountries}) => {
 						<button onClick={() => {
 							setFilteredCountries([country])
 							return (
-								<Country key={country.name.common} country={country}/>
+								<Country key={country.name.common} country={country}
+								weatherData={weatherData} setWeatherData={setWeatherData}/>
 							)
 							}
 						}>show</button>
@@ -75,7 +78,8 @@ const Display = ({ filteredCountries, setFilteredCountries}) => {
 	else if (filteredCountries.length === 1)
 	{
 		return (
-			<Country key={filteredCountries[0].name.common} country={filteredCountries[0]}/>
+			<Country key={filteredCountries[0].name.common} country={filteredCountries[0]}
+			weatherData={weatherData} setWeatherData={setWeatherData}/>
 		)
 	}
 }
@@ -84,6 +88,7 @@ function App() {
 	const [countries, setCountries] = useState([])
 	const [filter, setFilter] = useState([])
 	const [filteredCountries, setFilteredCountries] = useState([])
+	const [weatherData, setWeatherData] = useState([])
 	
 
 	useEffect(() => {
@@ -109,7 +114,8 @@ function App() {
 	return (
 		<>
 			<Filter filter={filter} handleFilterChange={handleFilterChange}/>
-			<Display filteredCountries={filteredCountries} setFilteredCountries={setFilteredCountries}/>
+			<Display filteredCountries={filteredCountries} setFilteredCountries={setFilteredCountries}
+			weatherData={weatherData} setWeatherData={setWeatherData}/>
 		</>
 	)
 
