@@ -23,19 +23,32 @@ const Languages = ({ languages }) => {
 	)
 }
 
-const Country = ({ country, weatherData, setWeatherData }) => {
+const Weather = ({ weatherData, country, setWeatherData }) => {
 	const api_key = process.env.REACT_APP_API_KEY
 	const lat = country.capitalInfo.latlng[0]
 	const lon = country.capitalInfo.latlng[1]
-	console.log(lat, lon, api_key)
 	useEffect(() => {
-		console.log('jeejee')
 		axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=daily,hourly,minutely,alerts&appid=${api_key}&units=metric`).then(response => {
 			setWeatherData(response.data)
-			console.log('tää', response.data)
 		}).catch((e) => console.log('error'))
 	}, [])
-	console.log('jippii', weatherData)
+	if (weatherData) {
+		const icon = weatherData.current.weather[0].icon
+		const iconUrl = `http://openweathermap.org/img/wn/${icon}@2x.png`
+		console.log(icon)
+		return (
+			<>
+				<h2>Weather in {country.capital}</h2>
+				<div>temperature {weatherData.current.temp} Celsius</div>
+				<img src={iconUrl} alt="weather icon"></img>
+				<div>wind {weatherData.current.wind_speed} m/s</div>
+			</>
+		)
+	}
+}
+
+const Country = ({ country, weatherData, setWeatherData }) => {
+
 	return (
 		<>
 			<h1>{country.name.common}</h1>
@@ -44,9 +57,7 @@ const Country = ({ country, weatherData, setWeatherData }) => {
 			<h2>languages</h2>
 			<Languages languages={country.languages}/>
 			<img src={country.flags.png} alt="country flag"></img>
-			<h2>Weather in {country.capital}</h2>
-			<div>temperature {weatherData.current.temp} Celsius</div>
-			<div>wind {weatherData.current.wind_speed} m/s</div>
+			<Weather country={country} weatherData={weatherData} setWeatherData={setWeatherData}/>
 		</>
 	)
 }
@@ -94,7 +105,7 @@ function App() {
 	const [countries, setCountries] = useState([])
 	const [filter, setFilter] = useState([])
 	const [filteredCountries, setFilteredCountries] = useState([])
-	const [weatherData, setWeatherData] = useState([])
+	const [weatherData, setWeatherData] = useState(null)
 	
 
 	useEffect(() => {
@@ -108,14 +119,6 @@ function App() {
 		const tmp = countries.filter(country => country.name.common.includes(filter))
 		setFilteredCountries(tmp)
 	}
-
-
-
-	// console.log(countries)
-	// countries.map(country => {
-	// 	console.log(country.name.common)
-	// })
-	// console.log(filter)
 
 	return (
 		<>
