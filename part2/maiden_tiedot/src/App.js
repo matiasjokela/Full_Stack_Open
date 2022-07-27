@@ -27,10 +27,14 @@ const Country = ({ country, weatherData, setWeatherData }) => {
 	const api_key = process.env.REACT_APP_API_KEY
 	const lat = country.capitalInfo.latlng[0]
 	const lon = country.capitalInfo.latlng[1]
-	axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=daily,hourly,minutely,alerts&appid=${api_key}&units=metric`).then(response => {
-		setWeatherData(response.data)
-	})
-
+	console.log(lat, lon, api_key)
+	useEffect(() => {
+		console.log('jeejee')
+		axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=daily,hourly,minutely,alerts&appid=${api_key}&units=metric`).then(response => {
+			setWeatherData(response.data)
+			console.log('tää', response.data)
+		}).catch((e) => console.log('error'))
+	}, [])
 	console.log('jippii', weatherData)
 	return (
 		<>
@@ -41,6 +45,8 @@ const Country = ({ country, weatherData, setWeatherData }) => {
 			<Languages languages={country.languages}/>
 			<img src={country.flags.png} alt="country flag"></img>
 			<h2>Weather in {country.capital}</h2>
+			<div>temperature {weatherData.current.temp} Celsius</div>
+			<div>wind {weatherData.current.wind_speed} m/s</div>
 		</>
 	)
 }
