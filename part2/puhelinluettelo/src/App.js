@@ -80,8 +80,9 @@ const App = () => {
 		}
 	}
 	else {
-		personsService.create(personObject).then(returnedPersons => {
-			setPersons(returnedPersons)
+		personsService.create(personObject).then(returnedPerson => {
+			const updatedPersons = persons.concat(returnedPerson)
+			setPersons(updatedPersons)
 			setNewName('')
 			setNewNumber('')
 			setMessage(`${newName} added`)
