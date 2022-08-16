@@ -91,11 +91,19 @@ const App = () => {
 				setMessage(null)
 				setStyle('')
 			}, 5000)
+		}).catch(error => {
+			setNewName('')
+			setNewNumber('')
+			setMessage(`${error.response.data.error.message}`)
+			setStyle('error')
+			setTimeout(() => {
+				setMessage(null)
+				setStyle('')
+			}, 5000)
 		})
 
 	}
   }
-
 
 const deletePerson = (name, id) => {
 	if (window.confirm(`Delete ${name}`))
