@@ -140,7 +140,6 @@ const deletePerson = (name, id) => {
 // 		}, 5000)
 // 	}
 
-
   }
   const handleNameChange = (event) => {
 	setNewName(event.target.value)
