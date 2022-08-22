@@ -76,6 +76,32 @@ test('title and url always found', async () => {
 	await api.post('/api/blogs').send(noUrlBlog).expect(400)
 })
 
+test('blogs can be deleted', async () => {
+	const blogsAtStart = await helper.blogsInDb()
+	const blogToDelete = blogsAtStart[0]
+
+	await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+
+	const blogsAtEnd = await helper.blogsInDb()
+	expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
+	
+	const blogIds = blogsAtEnd.map(blog => blog.id)
+	expect(blogIds).not.toContain(blogToDelete.id)
+})
+
+test('blogs can be updated', async() => {
+	const blogsAtStart = await helper.blogsInDb()
+	let blogToUpdate = JSON.parse(JSON.stringify(blogsAtStart[0]))
+	
+	blogToUpdate.likes += 1
+	await api.put(`/api/blogs/${blogToUpdate.id}`).send(blogToUpdate)
+	
+	const blogsAtEnd = await helper.blogsInDb()
+	expect(blogsAtStart[0].author).toBe(blogsAtEnd[0].author)
+	expect(blogsAtStart[0].likes + 1).toBe(blogsAtEnd[0].likes)
+
+})
+
 afterAll(() => {
 	mongoose.connection.close()
 })
