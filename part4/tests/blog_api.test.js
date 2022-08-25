@@ -6,6 +6,7 @@ const Blog = require('../models/blog')
 
 const api = supertest(app)
 
+let headers
 
 beforeEach(async () => {
 	const testUser = {
@@ -30,7 +31,7 @@ beforeEach(async () => {
 
 test('blogs are returned as json', async () => {
 	await api.get('/api/blogs').set(headers).expect(200)
-	.expect('Content-Type', /application\/json/)
+		.expect('Content-Type', /application\/json/)
 })
 
 test('all blogs are returned', async () => {
@@ -43,7 +44,7 @@ test('id field is found', async () => {
 	const returnedBlogs = response.body
 	returnedBlogs.forEach((blog) => {
 		expect(blog.id).toBeDefined()
-	});
+	})
 })
 
 test('blogs can be added', async () => {

@@ -65,9 +65,9 @@ const listWithOneBlog = [
 
 const initialUsers = [
 	{
-		"username": "root",
-		"name": "ruth",
-		"password": "secret"
+		'username': 'root',
+		'name': 'ruth',
+		'password': 'secret'
 	}
 ]
 
