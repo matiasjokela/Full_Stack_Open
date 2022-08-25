@@ -1,8 +1,5 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
-
 
 blogsRouter.get('/', async (request, response) => {
 	const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 })
@@ -26,8 +23,12 @@ blogsRouter.post('/', async (request, response) => {
 	}
 	const user = request.user
 
-	console.log('user', user)
-
+	if (!body.likes) {
+		body.likes = 0
+	}
+	if (!body.title || !body.url) {
+		return response.status(400).json({ error: 'must have title and url' })
+	}
 	const blog = new Blog({
 		title: body.title,
 		author: body.author,
@@ -43,8 +44,6 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
 	const blog = await Blog.findById(request.params.id)
-	console.log('blogi', blog.user.toString())
-	console.log('user', request.user._id.toString())
 	if (blog.user.toString() !== request.user._id.toString()) {
 		response.status(401).end()
 	} else {
