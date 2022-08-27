@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -22,6 +23,8 @@ const App = () => {
 	const [url, setUrl] = useState('')
 	const [message, setMessage] = useState(null)
 	const [style, setStyle] = useState('')
+
+	const addBlogRef = useRef()
 
 	useEffect(() => {
 		blogService.getAll().then(blogs =>
@@ -97,6 +100,7 @@ const App = () => {
 				setStyle('')
 			}, 5000)
 		}
+		addBlogRef.current.toggleVisibility()
 	}
 
 	const loginForm = () => (
@@ -118,7 +122,7 @@ const App = () => {
 	)
 
 	const addBlogs = () => (
-		<>
+		<Togglable buttonLabel='new blog' ref={addBlogRef}>
 			<h2>create new</h2>
 			<form onSubmit={handleAdding}>
 				<div>
@@ -135,7 +139,7 @@ const App = () => {
 				</div>
 				<button type="submit">create</button>
 			</form>
-		</>
+		</Togglable>
 	)
 
 	const loggedInView = () => (
