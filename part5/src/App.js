@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -18,9 +19,6 @@ const App = () => {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [user, setUser] = useState(null)
-	const [title, setTitle] = useState('')
-	const [author, setAuthor] = useState('')
-	const [url, setUrl] = useState('')
 	const [message, setMessage] = useState(null)
 	const [style, setStyle] = useState('')
 
@@ -69,39 +67,30 @@ const App = () => {
 		}
 	}
 
-	const handleAdding = async (event) => {
-		event.preventDefault()
+	const addBlog = async (blogObject) => {
+		addBlogRef.current.toggleVisibility()
 		try {
-			const blog = {
-				title: title,
-				author: author,
-				url: url
-			}
-			const returnedBlog = await blogService.create(blog)
+			const returnedBlog = await blogService.create(blogObject)
+			console.log(returnedBlog)
 			setBlogs(blogs.concat(returnedBlog))
-			setTitle('')
-			setAuthor('')
-			setUrl('')
 			setStyle('success')
-			setMessage(`a new blog ${title} by ${author} added`)
+			setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
 			setTimeout(() => {
 				setMessage(null)
 				setStyle('')
 			}, 3000)
 		} catch (exception) {
-			console.log('e', exception)
-			setTitle('')
-			setAuthor('')
-			setUrl('')
-			setStyle('error')
-			setMessage("blog not added, provide values for all fields")
-			setTimeout(() => {
-				setMessage(null)
-				setStyle('')
-			}, 5000)
+				setStyle('error')
+				setMessage("blog not added, provide values for all fields")
+				setTimeout(() => {
+					setMessage(null)
+					setStyle('')
+				}, 5000)
+			}
 		}
-		addBlogRef.current.toggleVisibility()
-	}
+
+
+	
 
 	const loginForm = () => (
 		<>
@@ -121,24 +110,9 @@ const App = () => {
 		</>
 	)
 
-	const addBlogs = () => (
+	const blogForm = () => (
 		<Togglable buttonLabel='new blog' ref={addBlogRef}>
-			<h2>create new</h2>
-			<form onSubmit={handleAdding}>
-				<div>
-					title
-					<input type="text" value={title} name="Title" onChange={({ target }) => setTitle(target.value)}/>
-				</div>
-				<div>
-					author
-					<input type="text" value={author} name="Author" onChange={({ target }) => setAuthor(target.value)}/>
-				</div>
-				<div>
-					url
-					<input type="text" value={url} name="Url" onChange={({ target }) => setUrl(target.value)}/>
-				</div>
-				<button type="submit">create</button>
-			</form>
+			<BlogForm createBlog={addBlog}/>
 		</Togglable>
 	)
 
@@ -153,7 +127,7 @@ const App = () => {
 					setUser(null)
 				}}>logout</button>
 			</p>
-			{addBlogs()}
+			{blogForm()}
 			{blogs.map(blog => {
 				console.log(blog);
 				return <Blog key={blog.id} blog={blog}/>
