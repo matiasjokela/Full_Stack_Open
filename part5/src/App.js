@@ -72,7 +72,8 @@ const App = () => {
 		try {
 			const returnedBlog = await blogService.create(blogObject)
 			console.log(returnedBlog)
-			setBlogs(blogs.concat(returnedBlog))
+			const allBlogs = await blogService.getAll()
+			setBlogs(allBlogs)
 			setStyle('success')
 			setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
 			setTimeout(() => {
