@@ -67,6 +67,21 @@ const App = () => {
 		}
 	}
 
+	const deleteBlog = async (id) => {
+		const returnedBlog = await blogService.remove(id)
+		console.log(returnedBlog)
+		const allBlogs = await blogService.getAll()
+		setBlogs(allBlogs)
+	}
+
+	const likeBlog = async (blogObject, id) => {
+		const returnedBlog = await blogService.update(blogObject, id)
+		console.log(returnedBlog)
+		const allBlogs = await blogService.getAll()
+		setBlogs(allBlogs)
+		
+	}
+
 	const addBlog = async (blogObject) => {
 		addBlogRef.current.toggleVisibility()
 		try {
@@ -130,8 +145,8 @@ const App = () => {
 			</p>
 			{blogForm()}
 			{blogs.map(blog => {
-				console.log(blog);
-				return <Blog key={blog.id} blog={blog}/>
+				return <Blog key={blog.id} blog={blog} likeBlog={likeBlog}
+				loggedUser={user} removeBlog={deleteBlog}/>
 			})}
 		</div>
 	)
