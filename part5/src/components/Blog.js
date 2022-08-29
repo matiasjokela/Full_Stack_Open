@@ -27,10 +27,10 @@ const Blog = ({ blog, likeBlog, loggedUser, removeBlog }) => {
 
 	return (
 		<div style={blogStyle}>
-			<div>
+			<div id='titleAndAuthor'>
 				{blog.title} {blog.author} <Button handleClick={toggleVisibility} text={buttonLabel}/>
 			</div>
-			<div style={showWhenVisible}>
+			<div style={showWhenVisible} id='additionalInfo'>
 				<div>{blog.url}</div>
 				<div>likes {blog.likes} <Button handleClick={() => {
 					likeBlog(({
