@@ -9,7 +9,6 @@ const Blog = ({ blog, likeBlog, loggedUser, removeBlog }) => {
 		borderWidth: 1,
 		marginBottom: 5
 	}
-	console.log('blog', blog)
 	const [allInfo, setAllInfo] = useState(false)
 	const [buttonLabel, setButtonLabel] = useState('view')
 
