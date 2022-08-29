@@ -1,9 +1,7 @@
-import { useState } from "react"
-import Button from "./Button"
+import { useState } from 'react'
+import Button from './Button'
 
-const Blog = ({blog, likeBlog, loggedUser, removeBlog}) => {
-	console.log('loggedUser', loggedUser)
-	console.log('blogUser', blog.user)
+const Blog = ({ blog, likeBlog, loggedUser, removeBlog }) => {
 	const blogStyle = {
 		paddingTop: 10,
 		paddingLeft: 2,
@@ -33,24 +31,24 @@ const Blog = ({blog, likeBlog, loggedUser, removeBlog}) => {
 				{blog.title} {blog.author} <Button handleClick={toggleVisibility} text={buttonLabel}/>
 			</div>
 			<div style={showWhenVisible}>
-					<div>{blog.url}</div>
-					<div>likes {blog.likes} <Button handleClick={() => {
-						likeBlog(({
-							user: blog.user.id,
-							likes: blog.likes + 1,
-							author: blog.author,
-							title: blog.title,
-							url: blog.url
-						}), blog.id)
-					}} text="like"/></div>
-					<div>{blog.user.name}</div>
-					{loggedUser.username === blog.user.username &&
-						<Button text='remove' handleClick={() => {
-							if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-								removeBlog(blog.id)
-							}
-						}}/>
-					}
+				<div>{blog.url}</div>
+				<div>likes {blog.likes} <Button handleClick={() => {
+					likeBlog(({
+						user: blog.user.id,
+						likes: blog.likes + 1,
+						author: blog.author,
+						title: blog.title,
+						url: blog.url
+					}), blog.id)
+				}} text="like"/></div>
+				<div>{blog.user.name}</div>
+				{loggedUser.username === blog.user.username &&
+					<Button text='remove' handleClick={() => {
+						if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+							removeBlog(blog.id)
+						}
+					}}/>
+				}
 			</div>
 		</div>
 	)

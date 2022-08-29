@@ -12,10 +12,10 @@ const setToken = newToken => {
 }
 
 const getAll = async () => {
-  const response = await axios.get(baseUrl)
-  let blogs = response.data.map(blog => blog)
-  blogs.sort((a, b) => b.likes - a.likes)
-  return blogs
+	const response = await axios.get(baseUrl)
+	let blogs = response.data.map(blog => blog)
+	blogs.sort((a, b) => b.likes - a.likes)
+	return blogs
 }
 
 const create = async (newBlog) => {

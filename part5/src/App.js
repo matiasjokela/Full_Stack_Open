@@ -6,7 +6,6 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 const Notification = ({ message, style }) => {
-	console.log('style', {style})
 	return (
 		<div className={style}>
 			{message}
@@ -26,7 +25,7 @@ const App = () => {
 
 	useEffect(() => {
 		blogService.getAll().then(blogs =>
-		setBlogs( blogs ))
+			setBlogs( blogs ))
 	}, [])
 
 	useEffect(() => {
@@ -59,7 +58,7 @@ const App = () => {
 			setUsername('')
 			setPassword('')
 			setStyle('error')
-			setMessage("wrong username or password")
+			setMessage('wrong username or password')
 			setTimeout(() => {
 				setMessage(null)
 				setStyle('')
@@ -79,7 +78,6 @@ const App = () => {
 		console.log(returnedBlog)
 		const allBlogs = await blogService.getAll()
 		setBlogs(allBlogs)
-		
 	}
 
 	const addBlog = async (blogObject) => {
@@ -96,17 +94,14 @@ const App = () => {
 				setStyle('')
 			}, 3000)
 		} catch (exception) {
-				setStyle('error')
-				setMessage("blog not added, provide values for all fields")
-				setTimeout(() => {
-					setMessage(null)
-					setStyle('')
-				}, 5000)
-			}
+			setStyle('error')
+			setMessage('blog not added, provide values for all fields')
+			setTimeout(() => {
+				setMessage(null)
+				setStyle('')
+			}, 5000)
 		}
-
-
-	
+	}
 
 	const loginForm = () => (
 		<>
@@ -137,7 +132,7 @@ const App = () => {
 			<h2>blogs</h2>
 			<Notification message={message} style={style}/>
 			<p>
-				{user.name} logged in 
+				{user.name} logged in
 				<button onClick={() => {
 					window.localStorage.removeItem('loggedBlogAppUser')
 					setUser(null)
@@ -146,7 +141,7 @@ const App = () => {
 			{blogForm()}
 			{blogs.map(blog => {
 				return <Blog key={blog.id} blog={blog} likeBlog={likeBlog}
-				loggedUser={user} removeBlog={deleteBlog}/>
+					loggedUser={user} removeBlog={deleteBlog}/>
 			})}
 		</div>
 	)
