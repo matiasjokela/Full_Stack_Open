@@ -9,26 +9,7 @@ describe('adding users', () => {
 		await User.deleteMany({})
 		await User.insertMany(helper.initialUsers)
 	})
-	test('valid user can be added', async () => {
-		const usersAtStart = await helper.usersInDb()
-		const newUser = {
-			'username': 'test',
-			'name': 'test',
-			'password': 'sala'
-		}
-		await api
-			.post('/api/users')
-			.send(newUser)
-			.expect(201)
-			.expect('Content-Type', /application\/json/)
 
-		const usersAtEnd = await helper.usersInDb()
-		expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
-
-		const usernames = usersAtEnd.map(u => u.username)
-		expect(usernames).toContain(newUser.username)
-		
-	})
 	test('duplicate usernames cannot be added', async () => {
 		const usersAtStart = await helper.usersInDb()
 		const newUser = {
