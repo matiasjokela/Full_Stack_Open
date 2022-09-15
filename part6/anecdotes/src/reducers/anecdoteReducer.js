@@ -18,9 +18,7 @@ const setAnecdotes = (anecdotes) => {
 	}
 }
 
-const addAnecdote = (anecdote) => {
-	const newAnecdote = asObject(anecdote)
-	anecdoteService.addNew(newAnecdote).then(anecdotes => console.log(anecdotes))
+const addAnecdote = (newAnecdote) => {
 	return {
 		type: 'NEW_ANECDOTE',
 		data: { newAnecdote }
@@ -31,6 +29,33 @@ const addVote = (id) => {
 	return {
 		type: 'VOTE',
 		data: { id }
+	}
+}
+
+const voteAnecdote = (anecdote) => {
+	return async (dispatch) => {
+		const originalAnecdote = asObject(anecdote)
+		const updatedAnecdote = {
+			content: anecdote.content,
+			votes: anecdote.votes + 1
+		}
+		await anecdoteService.update(updatedAnecdote, anecdote.id)
+		dispatch(addVote(anecdote.id))
+	}
+}
+
+const createAnecdote = (anecdote) => {
+	return async (dispatch) => {
+		const newAnecdote = asObject(anecdote)
+		await anecdoteService.addNew(newAnecdote)
+		dispatch(addAnecdote(newAnecdote))
+	}
+}
+
+const initializeAnecdotes = () => {
+	return async (dispatch) => {
+		const anecdotes = await anecdoteService.getAll()
+		dispatch(setAnecdotes(anecdotes))
 	}
 }
 
@@ -55,13 +80,9 @@ const reducer = (state = initialState, action) => {
 			return (action.data.allAnecdotes.content)
 		default:
 			return state
-
-
-
 	}
-
 }
 
-export { addVote, addAnecdote, setAnecdotes }
+export { initializeAnecdotes, createAnecdote, voteAnecdote }
 
 export default reducer
