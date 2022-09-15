@@ -8,7 +8,6 @@ const Filter = () => {
 	const anecdotes = useSelector(state => state.anecdotes)
 	const dispatch = useDispatch()
 
-	
 
 	const handleChange = (event) => {
 		const filter = event.target.value
