@@ -32,7 +32,7 @@
     },
     {
       "content": "Test anecdote",
-      "votes": 2,
+      "votes": 3,
       "id": "7665"
     },
     {
@@ -47,8 +47,8 @@
     },
     {
       "content": "dd",
-      "id": "99654",
-      "votes": 0
+      "votes": 1,
+      "id": "99654"
     },
     {
       "content": "dd",
@@ -63,6 +63,11 @@
     {
       "content": "dd",
       "id": "71774",
+      "votes": 0
+    },
+    {
+      "content": "ddddd",
+      "id": "23741",
       "votes": 0
     }
   ]
