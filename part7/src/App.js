@@ -86,6 +86,8 @@ const CreateNew = (props) => {
 	const content = useField('text')
 	const author = useField('text')
 	const info = useField('text')
+	//const { reset, ...authorNoReset } = author
+	//const { reset, ...infoNoReset } = info
 	//const [content, setContent] = useState('')
 	//const [author, setAuthor] = useState('')
 	//const [info, setInfo] = useState('')
@@ -107,6 +109,11 @@ const CreateNew = (props) => {
 		}, 5000)
 	}
 
+	const noResetField = (field) => {
+		const {reset, ...noResetField} = field
+		return noResetField
+	}
+
 	const handleReset = (e) => {
 		e.preventDefault()
 		content.reset()
@@ -121,15 +128,15 @@ const CreateNew = (props) => {
 			<form onSubmit={handleSubmit}>
 				<div>
 					content
-					<input name='content' type={content.type} value={content.value} onChange={content.onChange} />
+					<input {...noResetField(content)} />
 				</div>
 				<div>
 					author
-					<input name='author' type={author.type} value={author.value} onChange={author.onChange} />
+					<input {...noResetField(author)} />
 				</div>
 					<div>
 					url for more info
-					<input name='info' type={info.type} value={info.value} onChange={info.onChange} />
+					<input {...noResetField(info)} />
 				</div>
 				<button>create</button>
 				<button onClick={handleReset}>reset</button>
