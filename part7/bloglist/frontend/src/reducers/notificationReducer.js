@@ -4,7 +4,6 @@ const initialState = null;
 let timeoutID;
 
 const setNotification = (content, time) => {
-  console.log("täsä näi", content);
   clearTimeout(timeoutID);
   return async (dispatch) => {
     dispatch(Notification(content));
@@ -19,7 +18,6 @@ const notificationSlice = createSlice({
   initialState,
   reducers: {
     Notification(state, action) {
-      console.log("kutsuitte", action.payload);
       return action.payload;
     },
   },

@@ -1,25 +1,27 @@
 import { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Notification from "./components/Notification";
+import { useDispatch } from "react-redux";
 import { setNotification } from "./reducers/notificationReducer";
+import { initializeBlogs } from "./reducers/blogReducer";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector((state) => state.blogs);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [style, setStyle] = useState("");
+  const dispatch = useDispatch();
 
   const addBlogRef = useRef();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+    dispatch(initializeBlogs());
+  }, [dispatch]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
@@ -49,12 +51,8 @@ const App = () => {
       setUser(null);
       setUsername("");
       setPassword("");
-      setStyle("error");
-      setMessage("wrong username or password");
-      setTimeout(() => {
-        setMessage(null);
-        setStyle("");
-      }, 3000);
+
+      dispatch(setNotification("wrong username or password", 5));
     }
   };
 
@@ -70,31 +68,6 @@ const App = () => {
     console.log(returnedBlog);
     const allBlogs = await blogService.getAll();
     setBlogs(allBlogs);
-  };
-
-  const addBlog = async (blogObject) => {
-    addBlogRef.current.toggleVisibility();
-    try {
-      const returnedBlog = await blogService.create(blogObject);
-      console.log(returnedBlog);
-      const allBlogs = await blogService.getAll();
-      setBlogs(allBlogs);
-      setStyle("success");
-      setMessage(
-        `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
-      );
-      setTimeout(() => {
-        setMessage(null);
-        setStyle("");
-      }, 3000);
-    } catch (exception) {
-      setStyle("error");
-      setMessage("blog not added, provide values for all fields");
-      setTimeout(() => {
-        setMessage(null);
-        setStyle("");
-      }, 5000);
-    }
   };
 
   const loginForm = () => (
@@ -131,14 +104,14 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable buttonLabel="new blog" ref={addBlogRef}>
-      <BlogForm createBlog={addBlog} />
+      <BlogForm />
     </Togglable>
   );
 
   const loggedInView = () => (
     <div>
       <h2>blogs</h2>
-      <Notification message={message} style={style} />
+      <Notification />
       <p>
         {user.name} logged in
         <button
@@ -152,6 +125,7 @@ const App = () => {
       </p>
       {blogForm()}
       {blogs.map((blog) => {
+        console.log(blogs);
         return (
           <Blog
             key={blog.id}
