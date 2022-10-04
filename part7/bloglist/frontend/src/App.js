@@ -4,10 +4,8 @@ import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
-
-const Notification = ({ message, style }) => {
-  return <div className={style}>{message}</div>;
-};
+import Notification from "./components/Notification";
+import { setNotification } from "./reducers/notificationReducer";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -102,7 +100,7 @@ const App = () => {
   const loginForm = () => (
     <>
       <h2>log in to application</h2>
-      <Notification message={message} style={style} />
+      <Notification />
       <form onSubmit={handleLogin}>
         <div>
           username
